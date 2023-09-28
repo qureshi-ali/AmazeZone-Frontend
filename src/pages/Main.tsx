@@ -30,13 +30,14 @@ const Main: React.FC<Props> = ({ user = {} }) => {
 	};
 
 	const linkStyle = {
-		width: '10%',
+		width: '15%',
 		textAlign: 'center',
 		textDecoration: 'none',
 		padding: '5px 10px',
 		backgroundColor: '#007bff',
 		color: 'white',
 		borderRadius: '4px',
+		marginBottom: '10px'
 	};
 
 	return (
@@ -44,6 +45,9 @@ const Main: React.FC<Props> = ({ user = {} }) => {
 			<h1 style={headingStyle}>Welcome {user?.name}</h1>
 			<Link to={`/products`} style={linkStyle}>
 				View Products
+			</Link>
+			<Link to={`/credit_cards`} style={linkStyle}>
+				View Credit Cards
 			</Link>
 		</div>
 	);
