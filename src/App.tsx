@@ -19,6 +19,38 @@ const App: React.FC = () => {
 	const [user, setUser] = useState<User>({});
 	const [signupSuccess, setSignupSuccess] = useState<boolean>(false);
 
+	useEffect(() => {
+		// Function to make the API call and check the auth token validity
+		const checkAuthTokenValidity = async () => {
+			try {
+
+				const authToken = localStorage.getItem('auth_token');
+
+				const headers: HeadersInit = authToken
+					? { Authorization: `Bearer ${authToken}` }
+					: {};
+
+				const response = await axios('http://localhost:3000/auth/current', {
+					headers,
+				});
+
+				if (response.status === 200) {
+					setIsLoggedIn(true);
+					setUser(response.data)
+				} else {
+					setIsLoggedIn(false);
+					setUser({});
+				}
+			} catch (error) {
+				console.error('Error checking auth token validity:', error);
+				setIsLoggedIn(false);
+			}
+		};
+
+		// Call the function to check auth token validity when the component mounts
+		checkAuthTokenValidity();
+	}, []);
+
 	const handleLogin = (data: { user: User; auth_token: string }) => {
 		setIsLoggedIn(true);
 		setUser(data.user);

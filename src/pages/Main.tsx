@@ -11,7 +11,8 @@ interface Props {
 	user: User;
 }
 
-const Main: React.FC<Props> = ({ user = {} }) => {
+const Main: React.FC<Props> = ({ user }) => {
+
 	const containerStyle: React.CSSProperties = {
 		textAlign: 'center',
 		display: 'flex',
@@ -25,7 +26,7 @@ const Main: React.FC<Props> = ({ user = {} }) => {
 	const headingStyle: React.CSSProperties = {
 		fontSize: '36px',
 		marginBottom: '20px',
-		color: '#333',
+		color: '#FFF',
 	};
 
 	return (

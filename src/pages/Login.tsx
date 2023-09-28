@@ -10,7 +10,7 @@ interface User {
 }
 
 interface LoginState {
-	username: string;
+	email_address: string;
 	password: string;
 	errors: string[];
 }
@@ -29,7 +29,7 @@ interface Props {
 const Login: React.FC<Props> = ({ handleLogin }) => {
 	const navigate = useNavigate();
 	const [state, setState] = useState<LoginState>({
-		username: '',
+		email_address: '',
 		password: '',
 		errors: [],
 	});
@@ -84,16 +84,16 @@ const Login: React.FC<Props> = ({ handleLogin }) => {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const { username, password } = state;
+		const { email_address, password } = state;
 		const user = {
-			name: username,
-			password: password,
+			email_address,
+			password,
 		};
 
 		axios
 			.post(
 				'http://localhost:3000/auth/login',
-				{ user },
+				user,
 				{ withCredentials: true }
 			)
 			.then((response) => {
@@ -132,10 +132,10 @@ const Login: React.FC<Props> = ({ handleLogin }) => {
 			<h1>Log In</h1>
 			<form style={formStyle} onSubmit={handleSubmit}>
 				<input
-					placeholder='Username'
-					type='text'
-					name='username'
-					value={state.username}
+					placeholder='Email Address'
+					type='email'
+					name='email_address'
+					value={state.email_address}
 					onChange={handleChange}
 					style={inputStyle}
 				/>

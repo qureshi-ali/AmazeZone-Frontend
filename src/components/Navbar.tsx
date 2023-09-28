@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 interface NavbarProps {
 	isLoggedIn: boolean;
@@ -50,13 +49,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, handleLogout }) => {
 	};
 
 	const onLogout = () => {
-		axios
-			.post('http://localhost:3001/logout', { withCredentials: true })
-			.then(() => {
-				handleLogout();
-				redirect();
-			})
-			.catch((error) => console.log('Logout error:', error));
+		handleLogout();
+		redirect();
 	};
 
 	const redirect = () => {
