@@ -11,27 +11,25 @@ interface User {
 
 interface LoginState {
 	username: string;
-	email: string;
 	password: string;
 	errors: string[];
 }
 
 interface ApiResponse {
-	logged_in: boolean;
+	auth_token: string;
 	user: User;
 	errors: string[];
 	// Add other response properties here if needed
 }
 
 interface Props {
-	handleLogin: (data: { user: User }) => void;
+	handleLogin: (data: { user: User; auth_token: string }) => void;
 }
 
 const Login: React.FC<Props> = ({ handleLogin }) => {
 	const navigate = useNavigate();
 	const [state, setState] = useState<LoginState>({
 		username: '',
-		email: '',
 		password: '',
 		errors: [],
 	});
@@ -86,22 +84,21 @@ const Login: React.FC<Props> = ({ handleLogin }) => {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const { username, email, password } = state;
+		const { username, password } = state;
 		const user = {
 			name: username,
-			email_address: email,
 			password: password,
 		};
 
 		axios
 			.post(
-				'http://localhost:3001/login',
+				'http://localhost:3000/auth/login',
 				{ user },
 				{ withCredentials: true }
 			)
 			.then((response) => {
 				const responseData: ApiResponse = response.data;
-				if (responseData.logged_in) {
+				if (responseData.auth_token) {
 					handleLogin(responseData);
 					redirect();
 				} else {
@@ -139,14 +136,6 @@ const Login: React.FC<Props> = ({ handleLogin }) => {
 					type='text'
 					name='username'
 					value={state.username}
-					onChange={handleChange}
-					style={inputStyle}
-				/>
-				<input
-					placeholder='Email'
-					type='text'
-					name='email'
-					value={state.email}
 					onChange={handleChange}
 					style={inputStyle}
 				/>

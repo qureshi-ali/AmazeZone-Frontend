@@ -2,13 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-interface User {
-	id: number;
-	name: string;
-	email_address: string;
-	phone_number: string;
-}
-
 interface SignupState {
 	username: string;
 	email: string;
@@ -18,17 +11,15 @@ interface SignupState {
 }
 
 interface ApiResponse {
-	status: string;
-	user: User;
+	message: string;
 	errors: string[];
-	// Add other response properties here if needed
 }
 
 interface Props {
-	handleLogin: (data: { user: User }) => void;
+	setSignupSuccess: (value: boolean) => void;
 }
 
-const Signup: React.FC<Props> = ({ handleLogin }) => {
+const Signup: React.FC<Props> = ({ setSignupSuccess }) => {
 	const navigate = useNavigate();
 	const [state, setState] = useState<SignupState>({
 		username: '',
@@ -97,14 +88,15 @@ const Signup: React.FC<Props> = ({ handleLogin }) => {
 
 		axios
 			.post(
-				'http://localhost:3001/users',
+				'http://localhost:3000/signup',
 				{ user },
 				{ withCredentials: true }
 			)
 			.then((response) => {
 				const responseData: ApiResponse = response.data;
-				if (responseData.status === 'created') {
-					handleLogin(responseData);
+				console.log(responseData);
+				if (responseData.message) {
+					setSignupSuccess(true);
 					redirect();
 				} else {
 					setState({
@@ -117,7 +109,7 @@ const Signup: React.FC<Props> = ({ handleLogin }) => {
 	};
 
 	const redirect = () => {
-		navigate('/home');
+		navigate('/');
 	};
 
 	const handleErrors = () => {

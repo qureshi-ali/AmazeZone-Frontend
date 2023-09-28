@@ -17,34 +17,20 @@ interface User {
 const App: React.FC = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [user, setUser] = useState<User>({});
+	const [signupSuccess, setSignupSuccess] = useState<boolean>(false);
 
-	useEffect(() => {
-		loginStatus();
-	}, []);
-
-	const loginStatus = () => {
-		axios
-			.get('http://localhost:3001/logged_in', { withCredentials: true })
-			.then((response) => {
-				if (response.data.logged_in) {
-					handleLogin(response.data);
-				} else {
-					handleLogout();
-				}
-			})
-			.catch((error) => console.log('api errors:', error));
-	};
-
-	const handleLogin = (data: { user: User }) => {
+	const handleLogin = (data: { user: User; auth_token: string }) => {
 		setIsLoggedIn(true);
 		setUser(data.user);
-		console.log(isLoggedIn);
+		// Store the auth_token in local storage
+		localStorage.setItem('auth_token', data.auth_token);
 	};
 
 	const handleLogout = () => {
 		setIsLoggedIn(false);
 		setUser({});
-		console.log(isLoggedIn);
+		// Remove the auth_token from local storage
+		localStorage.removeItem('auth_token');
 	};
 
 	return (
@@ -68,9 +54,16 @@ const App: React.FC = () => {
 							/>
 							<Route
 								path='/signup'
-								element={<Signup handleLogin={handleLogin} />}
+								element={
+									<Signup
+										setSignupSuccess={setSignupSuccess}
+									/>
+								}
 							/>
-							<Route path='*' element={<Home />} />
+							<Route
+								path='*'
+								element={<Home signupSuccess={signupSuccess} />}
+							/>
 						</>
 					)}
 				</Routes>
