@@ -37,7 +37,7 @@ const ProductList: React.FC = () => {
 	const listItemStyle = {
 		marginBottom: '10px',
 		padding: '10px',
-		backgroundColor: 'white',
+		// backgroundColor: 'white',
 		border: '1px solid #ddd',
 		borderRadius: '4px',
 		display: 'flex',

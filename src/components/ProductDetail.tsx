@@ -34,7 +34,7 @@ const ProductDetail: React.FC = () => {
 
 	const containerStyle = {
 		fontFamily: 'Arial, sans-serif',
-		backgroundColor: '#f0f0f0',
+		// backgroundColor: '#f0f0f0',
 		padding: '20px',
 		height: '100vh',
 		width: '100vw',
@@ -49,7 +49,7 @@ const ProductDetail: React.FC = () => {
 		border: '1px solid #ddd',
 		borderRadius: '4px',
 		padding: '20px',
-		backgroundColor: 'white',
+		// backgroundColor: 'white',
 	};
 
 	if (!product) {
