@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface User {
 	id?: number;
@@ -28,9 +29,22 @@ const Main: React.FC<Props> = ({ user = {} }) => {
 		color: '#333',
 	};
 
+	const linkStyle = {
+		width: '10%',
+		textAlign: 'center',
+		textDecoration: 'none',
+		padding: '5px 10px',
+		backgroundColor: '#007bff',
+		color: 'white',
+		borderRadius: '4px',
+	};
+
 	return (
 		<div style={containerStyle}>
 			<h1 style={headingStyle}>Welcome {user?.name}</h1>
+			<Link to={`/products`} style={linkStyle}>
+				View Products
+			</Link>
 		</div>
 	);
 };

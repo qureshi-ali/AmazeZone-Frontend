@@ -13,6 +13,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, handleLogout }) => {
 		padding: '10px 0',
 		position: 'fixed',
 		width: '100vw',
+		top: '0',
+		left: '0',
 	};
 
 	const navbarListStyle: React.CSSProperties = {

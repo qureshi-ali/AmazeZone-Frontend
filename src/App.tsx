@@ -6,6 +6,10 @@ import Signup from './pages/Signup';
 import Main from './pages/Main';
 import Navbar from './components/Navbar';
 import PrivateRoute from './utils/PrivateRoute';
+import ProductList from './components/ProductList';
+import ProductDetail from './components/ProductDetail';
+import ProductForm from './components/ProductForm';
+import ProductDelete from './components/ProductDelete';
 
 interface User {
 	id?: number;
@@ -49,6 +53,13 @@ const App: React.FC = () => {
 						path='/signup'
 						element={<Signup setSignupSuccess={setSignupSuccess} />}
 					/>
+					<Route path='/products' element={<PrivateRoute />}>
+						<Route path='' element={<ProductList />} />
+						<Route path=':id' element={<ProductDetail />} />
+						<Route path='new' element={<ProductForm />} />
+						<Route path=':id/edit' element={<ProductForm />} />
+						<Route path=':id/delete' element={<ProductDelete />} />
+					</Route>
 					<Route
 						path='*'
 						element={<Home signupSuccess={signupSuccess} />}
