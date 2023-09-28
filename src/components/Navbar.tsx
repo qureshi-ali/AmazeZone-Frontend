@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 interface NavbarProps {
 	isLoggedIn: boolean;
@@ -9,8 +7,6 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, handleLogout }) => {
-	const navigate = useNavigate();
-
 	const navbarStyle: React.CSSProperties = {
 		backgroundColor: '#333',
 		color: 'white',
@@ -49,20 +45,6 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, handleLogout }) => {
 		transition: 'background-color 0.3s ease',
 	};
 
-	const onLogout = () => {
-		axios
-			.post('http://localhost:3001/logout', { withCredentials: true })
-			.then(() => {
-				handleLogout();
-				redirect();
-			})
-			.catch((error) => console.log('Logout error:', error));
-	};
-
-	const redirect = () => {
-		navigate('/');
-	};
-
 	return (
 		<nav style={navbarStyle}>
 			<ul style={navbarListStyle}>
@@ -83,7 +65,10 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, handleLogout }) => {
 				</li>
 				{isLoggedIn ? (
 					<li style={navbarItemStyle}>
-						<button onClick={onLogout} style={logoutButtonStyle}>
+						<button
+							onClick={handleLogout}
+							style={logoutButtonStyle}
+						>
 							Logout
 						</button>
 					</li>

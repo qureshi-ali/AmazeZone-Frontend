@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Main from './pages/Main';
 import Navbar from './components/Navbar';
+import PrivateRoute from './utils/PrivateRoute';
 
 interface User {
 	id?: number;
@@ -19,7 +19,7 @@ const App: React.FC = () => {
 	const [user, setUser] = useState<User>({});
 	const [signupSuccess, setSignupSuccess] = useState<boolean>(false);
 
-	const handleLogin = (data: { user: User; auth_token: string }) => {
+	const handleLogin = (data: { auth_token: string }) => {
 		setIsLoggedIn(true);
 		setUser(data.user);
 		// Store the auth_token in local storage
@@ -38,34 +38,21 @@ const App: React.FC = () => {
 			<BrowserRouter>
 				<Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
 				<Routes>
-					{isLoggedIn ? (
-						<>
-							<Route
-								path='/home'
-								element={<Main user={user} />}
-							/>
-							<Route path='*' element={<Main user={user} />} />
-						</>
-					) : (
-						<>
-							<Route
-								path='/login'
-								element={<Login handleLogin={handleLogin} />}
-							/>
-							<Route
-								path='/signup'
-								element={
-									<Signup
-										setSignupSuccess={setSignupSuccess}
-									/>
-								}
-							/>
-							<Route
-								path='*'
-								element={<Home signupSuccess={signupSuccess} />}
-							/>
-						</>
-					)}
+					<Route path='/home' element={<PrivateRoute />}>
+						<Route path='/home' element={<Main user={user} />} />
+					</Route>
+					<Route
+						path='/login'
+						element={<Login handleLogin={handleLogin} />}
+					/>
+					<Route
+						path='/signup'
+						element={<Signup setSignupSuccess={setSignupSuccess} />}
+					/>
+					<Route
+						path='*'
+						element={<Home signupSuccess={signupSuccess} />}
+					/>
 				</Routes>
 			</BrowserRouter>
 		</div>
