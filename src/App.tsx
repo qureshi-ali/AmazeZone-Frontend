@@ -14,6 +14,10 @@ import CreditCardList from './components/CreditCardList';
 import CreditCardForm from './components/CreditCardForm';
 import CreditCardDelete from './components/CreditCardDelete';
 import CreditCardDetail from './components/CreditCardDetail';
+import TransactionList from './components/TransactionList';
+import TransactionDetail from './components/TransactionDetail';
+import TransactionForm from './components/TransactionForm';
+import TransactionDelete from './components/TransactionDelete';
 
 interface User {
 	id?: number;
@@ -70,6 +74,13 @@ const App: React.FC = () => {
 						<Route path='new' element={<CreditCardForm />} />
 						<Route path=':id/edit' element={<CreditCardForm />} />
 						<Route path=':id/delete' element={<CreditCardDelete />} />
+					</Route>
+					<Route path='/transactions' element={<PrivateRoute />}>
+						<Route path='' element={<TransactionList />} />
+						<Route path=':id' element={<TransactionDetail />} />
+						<Route path='new' element={<TransactionForm />} />
+						<Route path=':id/edit' element={<TransactionForm />} />
+						<Route path=':id/delete' element={<TransactionDelete />} />
 					</Route>
 					<Route
 						path='*'
