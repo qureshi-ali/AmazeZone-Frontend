@@ -2,8 +2,21 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const ProductList: React.FC = () => {
-	const [products, setProducts] = useState([]);
+interface ProductListProps {
+	textAlign?: 'center';
+	flexDirection?: 'column';
+}
+
+const ProductList: React.FC<ProductListProps> = ({ textAlign, flexDirection }) => {
+	const [products, setProducts] = useState([
+		{
+			id: 0,
+			name: '',
+			category: '',
+			quantity: 0,
+			price: 0,
+		}
+	]);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -24,7 +37,7 @@ const ProductList: React.FC = () => {
 		width: '90vw',
 		height: '100vh',
 		display: 'flex',
-		flexDirection: 'column',
+		flexDirection: flexDirection || 'column',
 		marginLeft: '16px',
 	};
 
@@ -47,7 +60,7 @@ const ProductList: React.FC = () => {
 
 	const linkStyle = {
 		width: '10%',
-		textAlign: 'center',
+		textAlign: textAlign || 'center',
 		textDecoration: 'none',
 		marginLeft: 'auto',
 		padding: '5px 10px',
@@ -57,7 +70,7 @@ const ProductList: React.FC = () => {
 	};
 	const linkStyle2 = {
 		width: '10%',
-		textAlign: 'center',
+		textAlign: textAlign || 'center',
 		textDecoration: 'none',
 		marginTop: '5%',
 		padding: '5px 10px',

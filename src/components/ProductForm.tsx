@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const ProductForm: React.FC = () => {
+interface ProductFormProps {
+	flexDirection?: 'column';
+}
+
+const ProductForm: React.FC<ProductFormProps> = ({ flexDirection }) => {
 	const { id } = useParams();
 	const [product, setProduct] = useState({
 		name: '',
@@ -69,7 +73,7 @@ const ProductForm: React.FC = () => {
 		height: '100vh',
 		width: '100vw',
 		display: 'flex',
-		flexDirection: 'column',
+		flexDirection: flexDirection,
 		alignItems: 'center',
 		justifyContent: 'center',
 	};
