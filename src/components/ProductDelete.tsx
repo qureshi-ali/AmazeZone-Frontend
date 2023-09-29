@@ -17,7 +17,7 @@ const ProductDelete: React.FC = () => {
 
 	const containerStyle = {
 		fontFamily: 'Arial, sans-serif',
-		backgroundColor: '#f0f0f0',
+		// backgroundColor: '#f0f0f0',
 		padding: '20px',
 		marginTop: '3%',
 		width: '100vw',
