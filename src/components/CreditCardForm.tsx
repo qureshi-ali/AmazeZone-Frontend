@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const CreditCardForm: React.FC = () => {
+// Components
+import Error from './Error';
+
+interface CreditCardFormProps {
+	flexDirection?: 'column';
+}
+
+
+const CreditCardForm: React.FC<CreditCardFormProps> = ({ flexDirection }) => {
 	const { id } = useParams();
 	const [creditCard, setCreditCard] = useState({
 		name: '',
@@ -10,6 +18,7 @@ const CreditCardForm: React.FC = () => {
 		expiration_date: '',
 		cvv: '',
 	});
+	const [showError, setShowError] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -39,7 +48,12 @@ const CreditCardForm: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (id) {
+		const regex = new RegExp('[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+		console.log(regex.test(creditCard.expiration_date));
+		if(!regex.test(creditCard.expiration_date)){
+			setShowError(true);
+		}
+		else if (id) {
 			// Update existing credit card
 			await axios.put(`http://localhost:3000/credit_cards/${id}`, creditCard, {
 				headers: {
@@ -48,6 +62,9 @@ const CreditCardForm: React.FC = () => {
 					'Content-Type': 'application/json',
 				},
 			});
+			// Redirect to credit card list page or do something else after submission
+			navigate('/credit_cards');
+			
 		} else {
 			// Create a new credit card
 			await axios.post('http://localhost:3000/credit_cards', creditCard, {
@@ -57,9 +74,10 @@ const CreditCardForm: React.FC = () => {
 					'Content-Type': 'application/json',
 				},
 			});
+
+			// Redirect to credit card list page or do something else after submission
+			navigate('/credit_cards');
 		}
-		// Redirect to credit card list page or do something else after submission
-		navigate('/credit_cards');
 	};
 
 	const formStyle = {
@@ -69,7 +87,7 @@ const CreditCardForm: React.FC = () => {
 		height: '100vh',
 		width: '100vw',
 		display: 'flex',
-		flexDirection: 'column',
+		flexDirection: flexDirection || 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
 	};
@@ -106,6 +124,7 @@ const CreditCardForm: React.FC = () => {
 			<h1 style={headerStyle}>
 				{id ? 'Edit Credit Card' : 'Create Credit Card'}
 			</h1>
+		{showError && <Error message='Card Expiration Date Invalid'/>}
       <p>Enter exp date in yyyy-MM-dd format. Not validated</p>
 			<form onSubmit={handleSubmit}>
 				<label style={labelStyle}>
