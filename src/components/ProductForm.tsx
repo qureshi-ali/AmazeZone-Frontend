@@ -64,7 +64,7 @@ const ProductForm: React.FC = () => {
 
 	const formStyle = {
 		fontFamily: 'Arial, sans-serif',
-		backgroundColor: '#f0f0f0',
+		// backgroundColor: '#f0f0f0',
 		padding: '20px',
 		height: '100vh',
 		width: '100vw',

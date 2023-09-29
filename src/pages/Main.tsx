@@ -26,7 +26,7 @@ const Main: React.FC<Props> = ({ user = {} }) => {
 	const headingStyle: React.CSSProperties = {
 		fontSize: '36px',
 		marginBottom: '20px',
-		color: '#333',
+		color: '#FFF',
 	};
 
 	const linkStyle = {
