@@ -79,7 +79,6 @@ const App: React.FC = () => {
 						<Route path='' element={<TransactionList />} />
 						<Route path=':id' element={<TransactionDetail />} />
 						<Route path='new' element={<TransactionForm />} />
-						<Route path=':id/edit' element={<TransactionForm />} />
 						<Route path=':id/delete' element={<TransactionDelete />} />
 					</Route>
 					<Route

@@ -82,6 +82,9 @@ const ProductList: React.FC = () => {
 						<Link to={`/products/${product.id}`} style={linkStyle}>
 							Show
 						</Link>
+						<Link to={`/transactions/new`} state={{productId: product.id}} style={linkStyle}>
+							Purchase
+						</Link>
 						<Link
 							to={`/products/${product.id}/edit`}
 							style={linkStyle}

@@ -17,7 +17,6 @@ const TransactionDelete: React.FC = () => {
 
 	const containerStyle = {
 		fontFamily: 'Arial, sans-serif',
-		// backgroundColor: '#f0f0f0',
 		padding: '20px',
 		marginTop: '3%',
 		width: '100vw',
@@ -30,7 +29,7 @@ const TransactionDelete: React.FC = () => {
 	};
 
 	const handleDelete = async () => {
-		if (window.confirm('Are you sure you want to delete this credit card?')) {
+		if (window.confirm('Are you sure you want to delete this transaction?')) {
 			await axios.delete(`http://localhost:3000/transactions/${id}`, {
 				headers: {
 					Authorization: localStorage.getItem('auth_token'),
@@ -44,12 +43,12 @@ const TransactionDelete: React.FC = () => {
 
 	return (
 		<div style={containerStyle}>
-			<h1>Delete Credit Card</h1>
+			<h1>Delete Transaction</h1>
 			<p style={confirmationStyle}>
-				Are you sure you want to delete this credit card?
+				Are you sure you want to delete this transaction?
 			</p>
 			<button onClick={handleDelete} style={buttonStyle}>
-				Delete Credit Card
+				Delete Transaction
 			</button>
 		</div>
 	);

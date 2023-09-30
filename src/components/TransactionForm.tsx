@@ -1,97 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-
-// Components
-import Table from './Table';
-import Error from './Error';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 interface TransactionFormProps {
 	flexDirection?: 'column';
 }
 
+interface CreditCard {
+	id: number;
+	name: string;
+	card_number: string;
+	expiration_date?: string;
+	cvv?: string;
+}
+
+interface Product {
+	id: number;
+	name: string;
+	category?: string;
+	quantity?: number;
+	price: number;
+}
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
+	const location = useLocation();
+
 	const { id } = useParams();
 	const [transaction, setTransaction] = useState({
-        quantity: '',
-        total_cost: '',
-        product_id: '',
-        credit_card_id: '',
-    });
+		quantity: 0,
+		total_cost: 0,
+		product_id: 0,
+		credit_card_id: 0,
+	});
 
-    const [productIdList, setProductIdList] = useState([]);
-    const [creditCardIdList, setCreditCardIdList] = useState([]);
-    const [showError, setShowError] = useState(false);
+	const [productMap, setProductMap] = useState<{ [key: number]: Product }>({});
+	const [creditCardList, setCreditCardList] = useState<CreditCard[]>([]);
 
 	const navigate = useNavigate();
 
+
 	useEffect(() => {
-		async function fetchTransactionData() {
-			const response = await axios.get(
-				`http://localhost:3000/transactions/${id}`,
-				{
-					headers: {
-						Authorization: localStorage.getItem('auth_token'),
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-				}
-			);
-			setTransaction(response.data);
-		}
-		if (id) {
-			fetchTransactionData();
-		}
-	}, [id]);
+		const fetchProductsAndCards = async () => {
+			const creditCardListResponse = await axios.get(`http://localhost:3000/credit_cards`, {
+				headers: {
+					Authorization: localStorage.getItem('auth_token'),
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+			});
 
-    useEffect(() => {
-        const fetchLists = async () => {
-            const response = await axios.get(
-				`http://localhost:3000/credit_cards`,
-				{
-					headers: {
-						Authorization: localStorage.getItem('auth_token'),
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-				}
-			);
-            const list: string[] = []
-            response.data.map(elem => {
-                list.push([elem.id, elem.name])
-            })
-			setCreditCardIdList(list);
+			const creditCards: CreditCard[] = creditCardListResponse.data;
 
+			setCreditCardList(creditCards);
 
-            const response_ = await axios.get(
-				`http://localhost:3000/products`,
-				{
-					headers: {
-						Authorization: localStorage.getItem('auth_token'),
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-				}
-			);
-            const list_: string[] = []
-            response_.data.map(elem => {
-                list_.push([elem.id, elem.name])
-            })
-			setProductIdList(list_);
-        };
-        fetchLists();
-    }, []);
+			const productListResponse = await axios.get(`http://localhost:3000/products`, {
+				headers: {
+					Authorization: localStorage.getItem('auth_token'),
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+			});
 
-    useEffect(() => {
-        console.log(creditCardIdList)
-    }, [creditCardIdList]);
+			// Converting Products to a map for easy access to product price.
+			const products: { [key: number]: Product } = {};
+			productListResponse.data.map((product: Product) => {
+				products[product.id] = { id: product.id, name: product.name, price: product.price };
+			});
 
-    useEffect(() => {
-        console.log(productIdList)
-    }, [productIdList]);
+			setProductMap(products);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+			// location.state.productId is present if any productId was transferred using the Link element (see how "Purchase" in Product List works)
+			const productId = location.state && location.state.productId ? location.state.productId : Object.values(products)[0].id;
+
+			setTransaction({ ...transaction, product_id: productId, credit_card_id: creditCards[0].id })
+		};
+		fetchProductsAndCards();
+	}, []);
+
+	useEffect(() => {
+		// total cost is updated every time a product or quantity is changed
+		const price = transaction.product_id ? transaction.product_id : 0;
+		setTransaction({ ...transaction, total_cost: (transaction.quantity) * (price) });
+	}, [transaction.product_id, transaction.quantity])
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
 		const { name, value } = e.target;
 		setTransaction({ ...transaction, [name]: value });
 	};
@@ -99,46 +91,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-        const p_ids: string[] = []
-        const cc_ids: string[] = []
+		await axios.post('http://localhost:3000/transactions', transaction, {
+			headers: {
+				Authorization: localStorage.getItem('auth_token'),
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		});
 
-        productIdList.map(elem => p_ids.push(elem[0]))
-        creditCardIdList.map(elem => cc_ids.push(elem[0]))
-
-        if(!p_ids.includes(transaction.product_id) || !cc_ids.includes(transaction.credit_card_id)){
-            setShowError(true);
-        }
-        
-        if (id) {
-			// Update existing credit card
-			await axios.put(`http://localhost:3000/transactions/${id}`, transaction, {
-				headers: {
-					Authorization: localStorage.getItem('auth_token'),
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-			});
-			// Redirect to credit card list page or do something else after submission
-			navigate('/transactions');
-			
-		} else {
-			// Create a new credit card
-			await axios.post('http://localhost:3000/transactions', transaction, {
-				headers: {
-					Authorization: localStorage.getItem('auth_token'),
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-			});
-
-			// Redirect to credit card list page or do something else after submission
-			navigate('/transactions');
-		}
+		navigate('/transactions');
 	};
 
 	const formStyle = {
 		fontFamily: 'Arial, sans-serif',
-		// backgroundColor: '#f0f0f0',
 		padding: '20px',
 		height: '100vh',
 		width: '100vw',
@@ -146,9 +111,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
 		flexDirection: flexDirection || 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        paddingTop: 250,
+		overflowX: 'hidden',
+		overflowY: 'auto',
+		paddingTop: 250,
 	};
 
 	const headerStyle = {
@@ -171,73 +136,67 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
 
 	const buttonStyle = {
 		backgroundColor: '#007bff',
-		// color: 'white',
 		padding: '10px 20px',
 		border: 'none',
 		borderRadius: '4px',
 		cursor: 'pointer',
 	};
 
-    const tableContainerStyle = {
-		flexDirection: flexDirection || 'column'
-	};
-
 	return (
 		<div style={formStyle}>
-            {showError && <Error message='Product ID or Credit Card ID invalid'/>}
 			<h1 style={headerStyle}>
-				{id ? 'Edit Transactions' : 'Create Transaction'}
+				Purchase
 			</h1>
 			<form onSubmit={handleSubmit}>
 				<label style={labelStyle}>
 					Quantity:
 					<input
-						type='number'
-						name='quantity'
+						type="number"
+						name="quantity"
 						value={transaction.quantity}
 						onChange={handleChange}
 						style={inputStyle}
 					/>
 				</label>
 				<label style={labelStyle}>
+					Product:
+					<select style={inputStyle} name="product_id" value={transaction.product_id} onChange={handleChange} >
+						{
+							Object.values(productMap).map((product) => {
+								return (
+									<option value={product.id} key={product.id}>{product.name}</option>
+								)
+							})
+						}
+					</select>
+				</label>
+				<label style={labelStyle}>
 					Total Cost:
 					<input
-						type='number'
-						name='total_cost'
+						type="number"
+						name="total_cost"
 						value={transaction.total_cost}
-						onChange={handleChange}
 						style={inputStyle}
+						readOnly
 					/>
 				</label>
 				<label style={labelStyle}>
-                    Product ID:
-					<input
-                        type="text"
-						name='product_id'
-						value={transaction.product_id}
-						onChange={handleChange}
-						style={inputStyle}
-					/>
+					Credit Card:
+					<select style={inputStyle} name="credit_card_id" value={transaction.credit_card_id} onChange={handleChange} >
+						{
+							creditCardList.map((creditCard) => {
+								return (
+									<option value={creditCard.id} key={creditCard.id}>{creditCard.name} - {creditCard.card_number}</option>
+								)
+							})
+						}
+					</select>
 				</label>
-				<label style={labelStyle}>
-                Credit Card ID:
-					<input
-						type='text'
-						name='credit_card_id'
-						value={transaction.credit_card_id}
-						onChange={handleChange}
-						style={inputStyle}
-					/>
-				</label>
-				<button type='submit' style={buttonStyle}>
-					{id ? 'Update' : 'Create'}
+				<button type="submit" style={buttonStyle}>
+					Complete Purchase
 				</button>
 			</form>
 
-            <div style={tableContainerStyle}>
-                <Table header="Products" rows={productIdList}/>
-                <Table header="Credit Cards" rows={creditCardIdList} />
-            </div>
 		</div>
 	);
 };

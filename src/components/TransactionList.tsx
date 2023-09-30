@@ -50,7 +50,6 @@ const TransactionList: React.FC<TransactionProps> = ({ flexDirection, textAlign 
 	const listItemStyle = {
 		marginBottom: '10px',
 		padding: '10px',
-		// backgroundColor: 'white',
 		border: '1px solid #ddd',
 		borderRadius: '4px',
 		display: 'flex',
@@ -68,18 +67,9 @@ const TransactionList: React.FC<TransactionProps> = ({ flexDirection, textAlign 
 		color: 'white',
 		borderRadius: '4px',
 	};
-	const linkStyle2 = {
-		width: '15%',
-		textAlign: textAlign || 'center',
-		textDecoration: 'none',
-		marginTop: '5%',
-		padding: '5px 10px',
-		backgroundColor: '#007bff',
-		color: 'white',
-		borderRadius: '4px',
-	};
+
 	const listTitleStyle = {
-		width: '30%',
+		width: '15%',
 	};
 
 	return (
@@ -89,19 +79,19 @@ const TransactionList: React.FC<TransactionProps> = ({ flexDirection, textAlign 
 				{transactions.map((transaction) => (
 					<li key={transaction.id} style={listItemStyle}>
 						<div style={listTitleStyle}>
-							{transaction.quantity} - {transaction.total_cost}
+							Quantity: {transaction.quantity}
+						</div>
+						<div style={listTitleStyle}>
+							Total Cost: {transaction.total_cost}
 						</div>
             <div style={listTitleStyle}>
-							<b>Product ID:</b> {transaction.product_id} <b>Credit Card ID:</b> {transaction.credit_card_id}
+							<b>Product ID:</b> {transaction.product_id}
+						</div>
+						<div style={listTitleStyle}>
+							<b>Credit Card ID:</b> {transaction.credit_card_id}
 						</div>
 						<Link to={`/transactions/${transaction.id}`} style={linkStyle}>
 							Show
-						</Link>
-						<Link
-							to={`/transactions/${transaction.id}/edit`}
-							style={linkStyle}
-						>
-							Edit
 						</Link>
 						<Link
 							to={`/transactions/${transaction.id}/delete`}
@@ -112,9 +102,6 @@ const TransactionList: React.FC<TransactionProps> = ({ flexDirection, textAlign 
 					</li>
 				))}
 			</ul>
-			<Link to={`/transactions/new`} style={linkStyle2}>
-				New Transaction
-			</Link>
 		</div>
 	);
 };

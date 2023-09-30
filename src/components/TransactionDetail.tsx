@@ -79,7 +79,6 @@ const TransactionDetail: React.FC = () => {
 				</p>
 			</div>
 			<div style={{ marginTop: '20px' }}>
-				<Link to={`/transactions/${id}/edit`}>Edit</Link>
 				<Link
 					to={`/transactions/${id}/delete`}
 					style={{ marginLeft: '10px' }}

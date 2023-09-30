@@ -50,7 +50,7 @@ const Main: React.FC<Props> = ({ user = {} }) => {
 				View Credit Cards
 			</Link>
 			<Link to={`/transactions`} style={linkStyle}>
-				View Transactions
+				View Purchases
 			</Link>
 		</div>
 	);
