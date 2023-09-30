@@ -51,6 +51,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
 
 			const creditCards: CreditCard[] = creditCardListResponse.data;
 
+			// This list of credit cards is used to populate the select options.
 			setCreditCardList(creditCards);
 
 			const productListResponse = await axios.get(`http://localhost:3000/products`, {
@@ -67,6 +68,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
 				products[product.id] = { id: product.id, name: product.name, price: product.price };
 			});
 
+			// This map of products is used to populate the select options.
 			setProductMap(products);
 
 			// location.state.productId is present if any productId was transferred using the Link element (see how "Purchase" in Product List works)
@@ -177,7 +179,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ flexDirection }) => {
 						name="total_cost"
 						value={transaction.total_cost}
 						style={inputStyle}
-						readOnly
+						readOnly   // Field kept as readOnly
 					/>
 				</label>
 				<label style={labelStyle}>
